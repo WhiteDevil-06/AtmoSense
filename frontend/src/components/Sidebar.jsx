@@ -1,56 +1,117 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Settings, Globe as MapIcon, ChevronRight, PanelLeftClose } from 'lucide-react';
+import { LayoutDashboard, Globe, Settings, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 
-export default function Sidebar({ handleLogout }) {
+const navItems = [
+  { to: '/',        label: 'Command Center', icon: LayoutDashboard },
+  { to: '/map',     label: 'Sensor Map',     icon: Globe },
+  { to: '/devices', label: 'Devices',        icon: Settings },
+];
+
+export default function Sidebar() {
   const location = useLocation();
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className={`${isMinimized ? 'w-20' : 'w-64'} transition-all duration-300 ease-in-out bg-[#0f172a] border-r border-slate-800 flex flex-col min-h-screen shrink-0 z-20`}>
-      
-      {/* Universal CrediFlow Header Branding */}
-      <div className="p-6 h-24 flex items-center mb-2 shrink-0">
-        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shrink-0">
-          <img src="/meter.png" alt="Logo" className="w-5 h-5 filter invert" />
+    <aside style={{
+      width: collapsed ? '72px' : '240px',
+      transition: 'width 0.25s ease',
+      backgroundColor: 'var(--surface)',
+      borderRight: '1px solid var(--border)',
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh',
+      flexShrink: 0,
+      overflow: 'hidden',
+    }}>
+
+      {/* Branding */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.75rem',
+        padding: collapsed ? '1.375rem 1rem' : '1.375rem 1.25rem',
+        borderBottom: '1px solid var(--border)',
+        height: '72px',
+        flexShrink: 0,
+      }}>
+        <div style={{
+          width: '38px', height: '38px',
+          backgroundColor: 'var(--blue)',
+          borderRadius: '10px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0,
+          boxShadow: '0 0 18px rgba(37,99,235,0.3)',
+        }}>
+          <img
+            src="/meter.png"
+            alt="AtmoSense"
+            style={{ width: '22px', height: '22px', filter: 'brightness(0) invert(1)' }}
+          />
         </div>
-        {!isMinimized && (
-          <h1 className="ml-3 text-xl font-bold text-white tracking-wide whitespace-nowrap overflow-hidden">
+        {!collapsed && (
+          <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--text)', whiteSpace: 'nowrap', letterSpacing: '-0.01em' }}>
             AtmoSense
-          </h1>
+          </span>
         )}
       </div>
 
-      <nav className="flex-1 px-4 space-y-2 overflow-hidden">
-        <NavItem to="/" icon={<LayoutDashboard size={20} />} label="Command Center" active={location.pathname === '/'} minimized={isMinimized} />
-        <NavItem to="/map" icon={<MapIcon size={20} />} label="Sensor Map" active={location.pathname === '/map'} minimized={isMinimized} />
-        <NavItem to="/devices" icon={<Settings size={20} />} label="Devices" active={location.pathname === '/devices'} minimized={isMinimized} />
+      {/* Navigation */}
+      <nav style={{ flex: 1, padding: '1rem 0.625rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+        {navItems.map(({ to, label, icon: Icon }) => {
+          const isActive = location.pathname === to;
+          return (
+            <Link
+              key={to}
+              to={to}
+              title={collapsed ? label : ''}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.7rem 0.875rem',
+                borderRadius: '0.625rem',
+                textDecoration: 'none',
+                backgroundColor: isActive ? 'var(--blue)' : 'transparent',
+                color: isActive ? '#fff' : 'var(--muted)',
+                fontWeight: isActive ? 700 : 500,
+                fontSize: '0.875rem',
+                transition: 'background-color 0.15s ease, color 0.15s ease',
+                justifyContent: collapsed ? 'center' : 'flex-start',
+                boxShadow: isActive ? '0 4px 14px rgba(37,99,235,0.3)' : 'none',
+              }}
+              onMouseEnter={e => { if (!isActive) { e.currentTarget.style.backgroundColor = '#111f3a'; e.currentTarget.style.color = 'var(--text)'; } }}
+              onMouseLeave={e => { if (!isActive) { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--muted)'; } }}
+            >
+              <Icon size={18} style={{ flexShrink: 0 }} />
+              {!collapsed && <span style={{ whiteSpace: 'nowrap' }}>{label}</span>}
+            </Link>
+          );
+        })}
       </nav>
 
-      <div className="p-4 mt-auto border-t border-slate-800/50">
-        <button 
-          onClick={() => setIsMinimized(!isMinimized)}
-          className={`flex items-center w-full p-3 text-slate-400 hover:text-white rounded-lg transition-colors ${isMinimized ? 'justify-center' : 'gap-3'}`}
-          title="Collapse Sidebar"
+      {/* Collapse Button */}
+      <div style={{ padding: '0.75rem 0.625rem', borderTop: '1px solid var(--border)' }}>
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '0.75rem',
+            padding: '0.7rem 0.875rem', width: '100%',
+            borderRadius: '0.625rem', border: 'none',
+            backgroundColor: 'transparent', color: 'var(--muted)',
+            cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500,
+            justifyContent: collapsed ? 'center' : 'flex-start',
+            transition: 'background-color 0.15s ease, color 0.15s ease',
+            fontFamily: 'Inter, sans-serif',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#111f3a'; e.currentTarget.style.color = 'var(--text)'; }}
+          onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.color = 'var(--muted)'; }}
         >
-          <PanelLeftClose size={20} />
-          {!isMinimized && <span className="font-medium text-sm">Collapse</span>}
+          {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+          {!collapsed && <span>Collapse</span>}
         </button>
       </div>
-    </aside>
-  );
-}
 
-function NavItem({ to, icon, label, active, minimized }) {
-  return (
-    <Link to={to} title={minimized ? label : ''}>
-      <div className={`flex items-center p-3 rounded-xl transition-all ${active ? 'bg-blue-600 text-white shadow-[0_4px_14px_rgba(37,99,235,0.3)]' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'} ${minimized ? 'justify-center' : 'justify-between'}`}>
-        <div className="flex items-center gap-3">
-          {icon}
-          {!minimized && <span className="font-semibold text-sm">{label}</span>}
-        </div>
-        {!minimized && active && <ChevronRight size={16} className="text-white opacity-80" />}
-      </div>
-    </Link>
+    </aside>
   );
 }

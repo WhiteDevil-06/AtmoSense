@@ -1,101 +1,118 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Wind } from 'lucide-react';
 import api from '../services/api';
 
 export default function Login({ setAuth }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError('');
         try {
             const res = await api.post('/auth/login', { email, password });
             localStorage.setItem('token', res.data.token);
             setAuth(true);
             navigate('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed');
+            setError(err.response?.data?.message || 'Incorrect email or password.');
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center -mt-10 relative z-20">
-            
-            {/* Exploded Header (Outside the Card) */}
-            <div className="mb-8 flex flex-col items-center">
-                <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.4)] mb-5 shrink-0">
-                    <img src="/meter.png" alt="Logo" className="w-8 h-8 filter invert" />
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem', backgroundColor: 'var(--canvas)' }}>
+
+            {/* Logo + Title — floating above card */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem' }}>
+                <div style={{
+                    width: '60px', height: '60px',
+                    backgroundColor: 'var(--blue)',
+                    borderRadius: '16px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 0 28px rgba(37,99,235,0.35)',
+                    marginBottom: '1.25rem'
+                }}>
+                    <Wind size={28} color="#ffffff" strokeWidth={2} />
                 </div>
-                <h1 className="text-3xl font-bold text-white tracking-tight">Welcome back</h1>
-                <p className="text-slate-400 mt-2 font-medium">Sign in to AtmoSense</p>
+                <h1 style={{ fontSize: '1.875rem', fontWeight: 800, color: 'var(--text)', margin: 0, letterSpacing: '-0.02em' }}>
+                    Welcome back
+                </h1>
+                <p style={{ color: 'var(--muted)', marginTop: '0.5rem', fontSize: '0.925rem', fontWeight: 500 }}>
+                    Sign in to AtmoSense
+                </p>
             </div>
 
-            {/* Solid Structural Form Card */}
-            <div className="crediflow-card w-full max-w-[420px] p-8 shadow-2xl relative z-20">
+            {/* Card */}
+            <div className="atmo-card" style={{ width: '100%', maxWidth: '420px', padding: '2rem' }}>
+
                 {error && (
-                    <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl mb-6 text-sm text-center font-medium">
+                    <div style={{
+                        backgroundColor: 'rgba(239,68,68,0.08)',
+                        border: '1px solid rgba(239,68,68,0.25)',
+                        color: '#f87171',
+                        padding: '0.875rem 1rem',
+                        borderRadius: '0.625rem',
+                        fontSize: '0.875rem',
+                        marginBottom: '1.5rem',
+                        textAlign: 'center',
+                        fontWeight: 500
+                    }}>
                         {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                     <div>
-                        <label className="block text-slate-400 font-semibold mb-2 text-sm">Email Address</label>
+                        <label style={{ display: 'block', color: '#94a3b8', fontSize: '0.825rem', fontWeight: 600, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
+                            EMAIL ADDRESS
+                        </label>
                         <input
                             type="email"
-                            className="w-full crediflow-input"
+                            className="atmo-input"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            placeholder="you@example.com"
                             required
-                            placeholder="operator@atmosense.com"
                         />
                     </div>
+
                     <div>
-                        <div className="flex justify-between items-center mb-2">
-                             <label className="block text-slate-400 font-semibold text-sm">Password</label>
-                             <span className="text-blue-500 text-xs font-medium cursor-pointer hover:text-blue-400 transition-colors">Forgot Password?</span>
-                        </div>
+                        <label style={{ display: 'block', color: '#94a3b8', fontSize: '0.825rem', fontWeight: 600, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
+                            PASSWORD
+                        </label>
                         <input
                             type="password"
-                            className="w-full crediflow-input"
+                            className="atmo-input"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            required
                             placeholder="••••••••"
+                            required
                         />
                     </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-600 text-white rounded-xl py-3.5 font-bold hover:bg-blue-500 transition-colors shadow-lg shadow-blue-500/20 mt-8"
-                    >
-                        Sign In
+
+                    <button type="submit" className="atmo-btn" style={{ marginTop: '0.5rem' }} disabled={loading}>
+                        {loading ? 'Signing in...' : 'Sign In'}
                     </button>
                 </form>
 
-                <div className="mt-8 text-center text-sm font-medium text-slate-400">
+                <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.875rem', color: 'var(--muted)' }}>
                     Don't have an account?{' '}
-                    <button onClick={() => navigate('/register')} className="text-blue-400 hover:text-blue-300 transition-colors ml-1 font-semibold">
+                    <button
+                        onClick={() => navigate('/register')}
+                        style={{ background: 'none', border: 'none', color: 'var(--blue)', fontWeight: 600, cursor: 'pointer', padding: 0, fontSize: '0.875rem' }}
+                    >
                         Create one
                     </button>
-                </div>
+                </p>
             </div>
 
-            {/* Unified Professional Fixed Footer */}
-            <div className="fixed bottom-0 left-0 w-full px-12 py-6 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500 font-medium bg-[#030712] border-t border-slate-800/50 z-10 gap-4">
-                <div className="flex items-center gap-3">
-                    <span className="font-semibold tracking-wide text-slate-300">© 2026 AtmoSense</span>
-                    <span className="bg-slate-800/80 text-blue-400 px-2 py-0.5 rounded text-[10px] tracking-widest font-bold">V 2.0</span>
-                </div>
-                <div className="hidden sm:flex gap-8">
-                    <span>UNLOX Project for Trivion Technology</span>
-                    <span>Rakshith Raghavendra & Athish Kashyappa</span>
-                </div>
-                <div className="hover:text-slate-300 transition-colors cursor-pointer">
-                    Icons by Flaticon
-                </div>
-            </div>
         </div>
     );
 }

@@ -1,59 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import 'tailwindcss';
 
-/* 
-  CrediFlow 1:1 Aesthetic Architecture 
-  Solid deep backgrounds, zero muddy blurs, strict inputs.
-*/
+/* ─── AtmoSense Design Tokens ─────────────────────────────── */
+:root {
+  --canvas:   #05090f;   /* Page background  */
+  --surface:  #0d1424;   /* Card / panel     */
+  --input:    #030712;   /* Input (inset)    */
+  --border:   #1a2540;   /* All borders      */
+  --blue:     #2563eb;   /* Primary accent   */
+  --blue-glow:rgba(37,99,235,0.18);
+  --safe:     #22c55e;
+  --warn:     #f59e0b;
+  --danger:   #ef4444;
+  --text:     #f8fafc;
+  --muted:    #64748b;
+}
 
-body {
-  background-color: #030712; /* Slate-950 */
-  color: #f8fafc; /* Slate-50 */
+/* ─── Base ─────────────────────────────────────────────────── */
+html, body, #root {
+  height: 100%;
+  background-color: var(--canvas);
+  color: var(--text);
   font-family: 'Inter', sans-serif;
-  min-height: 100vh;
-  /* Distinctive CrediFlow Viewport Vignette */
-  box-shadow: inset 0 0 120px rgba(37, 99, 235, 0.15);
-  margin: 0;
   -webkit-font-smoothing: antialiased;
+  /* Subtle atmospheric blue edge vignette */
+  background-image: radial-gradient(
+    ellipse 80% 50% at 50% -10%,
+    rgba(37,99,235,0.08) 0%,
+    transparent 70%
+  );
 }
 
-/* Base Form/Card Tokens */
-.crediflow-card {
-  background-color: #0f172a; /* Slate-900 */
-  border: 1px solid #1e293b; /* Slate-800 */
+/* ─── Utility Classes ──────────────────────────────────────── */
+
+/* Elevated dark panel */
+.atmo-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 1rem;
 }
 
-/* Inset inputs that are darker than the card they sit on */
-.crediflow-input {
-  background-color: #020617; /* Slate-950 (Darker than card) */
-  border: 1px solid #1e293b;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease-in-out;
+/* Inset input — darker than the card it sits on */
+.atmo-input {
+  width: 100%;
+  background-color: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 0.625rem;
   padding: 0.75rem 1rem;
-  color: #f8fafc;
+  color: var(--text);
+  font-size: 0.925rem;
+  font-family: 'Inter', sans-serif;
   outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.crediflow-input:focus {
-  border-color: #2563eb; /* Blue-600 */
-  box-shadow: 0 0 0 1px #2563eb;
+.atmo-input::placeholder {
+  color: var(--muted);
 }
 
-/* Legacy mappings for backward compatibility during exact migration */
-.glass-panel {
-  background-color: #0f172a;
-  border: 1px solid #1e293b;
-  border-radius: 1rem;
+.atmo-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
 }
 
-.glass-input {
-  background-color: #020617;
-  border: 1px solid #1e293b;
-  border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
-  color: #f8fafc;
-  outline: none;
+/* Primary button */
+.atmo-btn {
+  width: 100%;
+  background-color: var(--blue);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.875rem 1.5rem;
+  border-radius: 0.625rem;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  font-family: 'Inter', sans-serif;
 }
-.glass-input:focus {
-  border-color: #2563eb;
+
+.atmo-btn:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-1px);
 }
+
+.atmo-btn:active {
+  transform: translateY(0);
+}
+
+/* Status colours */
+.status-safe    { color: var(--safe); }
+.status-warn    { color: var(--warn); }
+.status-danger  { color: var(--danger); }
+
+.bg-safe    { background-color: var(--safe); }
+.bg-warn    { background-color: var(--warn); }
+.bg-danger  { background-color: var(--danger); }

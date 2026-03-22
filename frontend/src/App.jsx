@@ -13,9 +13,7 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      setIsAuthenticated(true);
-    }
+    if (token) setIsAuthenticated(true);
   }, []);
 
   const handleLogout = () => {
@@ -25,43 +23,30 @@ function App() {
 
   return (
     <Router>
-      <div className="flex min-h-screen bg-[#030712] font-sans text-slate-50 selection:bg-blue-500/30 overflow-hidden">
-        {isAuthenticated && <Sidebar />}
-        
-        <div className="flex-1 flex flex-col min-h-screen overflow-hidden relative">
-          
-          {isAuthenticated && <Header handleLogout={handleLogout} />}
-          
-          <main className={`flex-1 overflow-y-auto w-full z-10 ${isAuthenticated ? 'p-8 lg:p-10' : ''}`}>
-            <Routes>
-              <Route 
-                path="/login" 
-                element={isAuthenticated ? <Navigate to="/" /> : <Login setAuth={setIsAuthenticated} />} 
-              />
-              <Route 
-                path="/register" 
-                element={isAuthenticated ? <Navigate to="/" /> : <Register />} 
-              />
-              <Route 
-                path="/" 
-                element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
-              />
-              <Route 
-                path="/devices" 
-                element={isAuthenticated ? <Devices /> : <Navigate to="/login" />} 
-              />
-              <Route 
-                path="/map" 
-                element={isAuthenticated ? <MapView /> : <Navigate to="/login" />} 
-              />
-              <Route 
-                 path="*" 
-                 element={<Navigate to={isAuthenticated ? "/" : "/login"} />} 
-              />
-            </Routes>
-          </main>
+      {isAuthenticated ? (
+        /* ── Authenticated shell ── */
+        <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--canvas)' }}>
+          <Sidebar />
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh', overflow: 'hidden' }}>
+            <Header handleLogout={handleLogout} />
+            <main style={{ flex: 1, overflowY: 'auto', padding: '2rem 2.5rem' }}>
+              <Routes>
+                <Route path="/"        element={<Dashboard />} />
+                <Route path="/devices" element={<Devices />} />
+                <Route path="/map"     element={<MapView />} />
+                <Route path="*"        element={<Navigate to="/" />} />
+              </Routes>
+            </main>
+          </div>
         </div>
-      </div>
+      ) : (
+        /* ── Unauthenticated shell ── */
+        <Routes>
+          <Route path="/login"    element={<Login setAuth={setIsAuthenticated} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="*"         element={<Navigate to="/login" />} />
+        </Routes>
+      )}
     </Router>
   );
 }
