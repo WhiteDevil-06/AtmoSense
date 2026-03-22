@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
+import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
 import Devices from './pages/Devices';
 import MapView from './pages/Map';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Footer from './components/Footer';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,38 +25,42 @@ function App() {
 
   return (
     <Router>
-      <div className="flex min-h-screen bg-slate-950 font-sans text-slate-200">
-        {isAuthenticated && <Sidebar handleLogout={handleLogout} />}
+      <div className="flex min-h-screen bg-[#030712] font-sans text-slate-50 selection:bg-blue-500/30 overflow-hidden">
+        {isAuthenticated && <Sidebar />}
         
-        <main className={`flex-1 overflow-y-auto ${isAuthenticated ? 'p-8' : ''}`}>
-          <Routes>
-            <Route 
-              path="/login" 
-              element={isAuthenticated ? <Navigate to="/" /> : <Login setAuth={setIsAuthenticated} />} 
-            />
-            <Route 
-              path="/register" 
-              element={isAuthenticated ? <Navigate to="/" /> : <Register />} 
-            />
-            <Route 
-              path="/" 
-              element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
-            />
-            <Route 
-              path="/devices" 
-              element={isAuthenticated ? <Devices /> : <Navigate to="/login" />} 
-            />
-            <Route 
-              path="/map" 
-              element={isAuthenticated ? <MapView /> : <Navigate to="/login" />} 
-            />
-            <Route 
-               path="*" 
-               element={<Navigate to={isAuthenticated ? "/" : "/login"} />} 
-            />
-          </Routes>
-          {isAuthenticated && <Footer />}
-        </main>
+        <div className="flex-1 flex flex-col min-h-screen overflow-hidden relative">
+          
+          {isAuthenticated && <Header handleLogout={handleLogout} />}
+          
+          <main className={`flex-1 overflow-y-auto w-full z-10 ${isAuthenticated ? 'p-8 lg:p-10' : ''}`}>
+            <Routes>
+              <Route 
+                path="/login" 
+                element={isAuthenticated ? <Navigate to="/" /> : <Login setAuth={setIsAuthenticated} />} 
+              />
+              <Route 
+                path="/register" 
+                element={isAuthenticated ? <Navigate to="/" /> : <Register />} 
+              />
+              <Route 
+                path="/" 
+                element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />} 
+              />
+              <Route 
+                path="/devices" 
+                element={isAuthenticated ? <Devices /> : <Navigate to="/login" />} 
+              />
+              <Route 
+                path="/map" 
+                element={isAuthenticated ? <MapView /> : <Navigate to="/login" />} 
+              />
+              <Route 
+                 path="*" 
+                 element={<Navigate to={isAuthenticated ? "/" : "/login"} />} 
+              />
+            </Routes>
+          </main>
+        </div>
       </div>
     </Router>
   );

@@ -1,41 +1,55 @@
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Activity, Settings, LogOut, Globe as MapIcon } from 'lucide-react';
+import { LayoutDashboard, Settings, Globe as MapIcon, ChevronRight, PanelLeftClose } from 'lucide-react';
 
 export default function Sidebar({ handleLogout }) {
   const location = useLocation();
+  const [isMinimized, setIsMinimized] = useState(false);
 
   return (
-    <aside className="w-64 bg-slate-900 border-r border-slate-800 p-6 flex flex-col min-h-screen">
-      <div className="flex items-center gap-3 mb-12">
-        <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-          <Activity className="text-white" size={24} />
+    <aside className={`${isMinimized ? 'w-20' : 'w-64'} transition-all duration-300 ease-in-out bg-[#0f172a] border-r border-slate-800 flex flex-col min-h-screen shrink-0 z-20`}>
+      
+      {/* Universal CrediFlow Header Branding */}
+      <div className="p-6 h-24 flex items-center mb-2 shrink-0">
+        <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shrink-0">
+          <img src="/meter.png" alt="Logo" className="w-5 h-5 filter invert" />
         </div>
-        <h1 className="text-xl font-bold tracking-tight text-white">AtmoSense</h1>
+        {!isMinimized && (
+          <h1 className="ml-3 text-xl font-bold text-white tracking-wide whitespace-nowrap overflow-hidden">
+            AtmoSense
+          </h1>
+        )}
       </div>
 
-      <nav className="flex-1 space-y-2">
-        <NavItem to="/" icon={<LayoutDashboard size={20} />} label="Command Center" active={location.pathname === '/'} />
-        <NavItem to="/map" icon={<MapIcon size={20} />} label="Sensor Map" active={location.pathname === '/map'} />
-        <NavItem to="/devices" icon={<Settings size={20} />} label="Devices" active={location.pathname === '/devices'} />
+      <nav className="flex-1 px-4 space-y-2 overflow-hidden">
+        <NavItem to="/" icon={<LayoutDashboard size={20} />} label="Command Center" active={location.pathname === '/'} minimized={isMinimized} />
+        <NavItem to="/map" icon={<MapIcon size={20} />} label="Sensor Map" active={location.pathname === '/map'} minimized={isMinimized} />
+        <NavItem to="/devices" icon={<Settings size={20} />} label="Devices" active={location.pathname === '/devices'} minimized={isMinimized} />
       </nav>
 
-      <button 
-        onClick={handleLogout}
-        className="flex items-center gap-3 text-slate-400 hover:text-red-400 transition-colors mt-auto p-3 hover:bg-red-500/10 rounded-lg"
-      >
-        <LogOut size={20} />
-        <span className="font-medium">Sign Out</span>
-      </button>
+      <div className="p-4 mt-auto border-t border-slate-800/50">
+        <button 
+          onClick={() => setIsMinimized(!isMinimized)}
+          className={`flex items-center w-full p-3 text-slate-400 hover:text-white rounded-lg transition-colors ${isMinimized ? 'justify-center' : 'gap-3'}`}
+          title="Collapse Sidebar"
+        >
+          <PanelLeftClose size={20} />
+          {!isMinimized && <span className="font-medium text-sm">Collapse</span>}
+        </button>
+      </div>
     </aside>
   );
 }
 
-function NavItem({ to, icon, label, active = false }) {
+function NavItem({ to, icon, label, active, minimized }) {
   return (
-    <Link to={to}>
-      <div className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${active ? 'bg-blue-600 border border-blue-500/30 text-white shadow-lg shadow-blue-500/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}>
-        {icon}
-        <span className="font-medium">{label}</span>
+    <Link to={to} title={minimized ? label : ''}>
+      <div className={`flex items-center p-3 rounded-xl transition-all ${active ? 'bg-blue-600 text-white shadow-[0_4px_14px_rgba(37,99,235,0.3)]' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'} ${minimized ? 'justify-center' : 'justify-between'}`}>
+        <div className="flex items-center gap-3">
+          {icon}
+          {!minimized && <span className="font-semibold text-sm">{label}</span>}
+        </div>
+        {!minimized && active && <ChevronRight size={16} className="text-white opacity-80" />}
       </div>
     </Link>
   );
