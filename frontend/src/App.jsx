@@ -6,6 +6,7 @@ import Devices from './pages/Devices';
 import MapView from './pages/Map';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Footer from './components/Footer';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -54,6 +55,7 @@ function App() {
                element={<Navigate to={isAuthenticated ? "/" : "/login"} />} 
             />
           </Routes>
+          {isAuthenticated && <Footer />}
         </main>
       </div>
     </Router>

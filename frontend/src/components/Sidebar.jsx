@@ -10,7 +10,7 @@ export default function Sidebar({ handleLogout }) {
         <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
           <Activity className="text-white" size={24} />
         </div>
-        <h1 className="text-xl font-bold tracking-tight text-white">GRI MONITOR</h1>
+        <h1 className="text-xl font-bold tracking-tight text-white">AtmoSense</h1>
       </div>
 
       <nav className="flex-1 space-y-2">

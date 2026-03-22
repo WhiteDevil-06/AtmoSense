@@ -7,7 +7,7 @@ const Device = require('../models/Device');
 // Typically it might use a simple API key, but we'll allow pushing via deviceId for now
 router.post('/', async (req, res) => {
     try {
-        const { deviceId, mq2Level, mq135Level } = req.body;
+        const { deviceId, mq2Level, mq135Level, mq7Level } = req.body;
         
         // Optionally verify if device exists
         const device = await Device.findOne({ deviceId });
@@ -18,7 +18,8 @@ router.post('/', async (req, res) => {
         const gasData = new GasData({
             deviceId,
             mq2Level,
-            mq135Level
+            mq135Level,
+            mq7Level
         });
         
         await gasData.save();

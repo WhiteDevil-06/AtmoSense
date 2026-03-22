@@ -27,7 +27,7 @@ export default function Register() {
                     <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
                         <Activity className="text-white" size={28} />
                     </div>
-                    <h1 className="text-2xl font-bold tracking-tight text-white">GRI Register</h1>
+                    <h1 className="text-2xl font-bold tracking-tight text-white">AtmoSense Register</h1>
                 </div>
                 
                 {error && <div className="bg-red-500/10 text-red-500 p-3 rounded-lg mb-4 text-center">{error}</div>}
